@@ -1,0 +1,243 @@
+# Mood Surge - Flutter Flame Game Development Rules
+
+## Project Context
+This is a Flutter Flame 2D game built with Very Good CLI brick structure. Uses BLoC for state management, flame_behaviors for entity composition, and follows very_good_analysis standards. The game features environment-specific builds (dev/staging/production) with comprehensive testing and internationalization support.
+
+## Architecture Principles
+- **Separation of Concerns**: Keep Flutter app logic separate from Flame game logic
+- **Composition over Inheritance**: Use flame_behaviors for entity composition
+- **State Management**: Use BLoC/Cubit pattern for complex state, local state for simple UI
+- **Testing**: Write tests for all business logic, use TDD when possible
+- **Performance**: Optimize for 60fps, minimize allocations in update loops
+
+## Code Generation Guidelines
+When generating code, follow these patterns:
+
+### File Organization
+```
+lib/
+├── app/                    # Flutter app configuration & routing
+├── game/                   # All Flame game logic
+│   ├── components/         # Reusable game components (UI, effects, etc.)
+│   ├── cubit/             # Game state management
+│   ├── entities/          # Game entities with behaviors
+│   │   └── [entity]/      # Each entity gets its own directory
+│   │       └── behaviors/ # Entity-specific behaviors
+│   └── view/              # Game view widgets & overlays
+├── [feature]/             # Feature modules (loading, title, etc.)
+│   ├── cubit/            # Feature state management
+│   └── view/             # Feature UI components
+└── gen/                   # Generated code (assets, l10n)
+```
+
+### Naming Conventions
+- **Components**: `[Purpose]Component` (e.g., `HealthBarComponent`)
+- **Entities**: `[Name]` (e.g., `Player`, `Enemy`)
+- **Behaviors**: `[Purpose]Behavior` (e.g., `MovementBehavior`)
+- **Cubits**: `[Feature]Cubit` (e.g., `GameCubit`)
+- **States**: `[Feature]State` (e.g., `GameState`)
+- **Events**: `[Feature]Event` (e.g., `GameEvent`)
+- **Pages**: `[Feature]Page` (e.g., `TitlePage`)
+- **Views**: `[Feature]View` (e.g., `GameView`)
+
+### Code Templates
+
+#### Flame Component Template
+```dart
+import 'package:flame/components.dart';
+import 'package:mood_surge/game/game.dart';
+
+class ExampleComponent extends PositionComponent 
+    with HasGameReference<MoodSurge> {
+  ExampleComponent({
+    required super.position,
+    super.size,
+    super.anchor = Anchor.center,
+  });
+  
+  @override
+  Future<void> onLoad() async {
+    // Initialize component
+  }
+  
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Update logic (avoid expensive operations)
+  }
+  
+  @override
+  void onRemove() {
+    // Cleanup resources
+    super.onRemove();
+  }
+}
+```
+
+#### Entity with Behaviors Template
+```dart
+import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:mood_surge/game/game.dart';
+
+class ExampleEntity extends PositionedEntity 
+    with HasGameReference<MoodSurge> {
+  ExampleEntity({
+    required super.position,
+    super.size = const Vector2.all(32),
+    super.anchor = Anchor.center,
+  }) : super(
+        behaviors: [
+          // Add behaviors here
+        ],
+      );
+      
+  @override
+  Future<void> onLoad() async {
+    // Entity initialization
+  }
+}
+```
+
+#### Behavior Template
+```dart
+import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:mood_surge/game/game.dart';
+
+class ExampleBehavior extends Behavior<ExampleEntity> 
+    with HasGameReference<MoodSurge> {
+  @override
+  Future<void> onLoad() async {
+    // Behavior initialization
+  }
+  
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Behavior update logic
+  }
+}
+```
+
+#### Cubit Template
+```dart
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+
+part 'example_state.dart';
+
+class ExampleCubit extends Cubit<ExampleState> {
+  ExampleCubit() : super(const ExampleState.initial());
+  
+  void doSomething() {
+    // Business logic
+    emit(state.copyWith(/* new state */));
+  }
+}
+```
+
+#### State Template
+```dart
+part of 'example_cubit.dart';
+
+class ExampleState extends Equatable {
+  const ExampleState({
+    this.status = ExampleStatus.initial,
+    // other properties
+  });
+  
+  const ExampleState.initial() : this();
+  
+  final ExampleStatus status;
+  
+  ExampleState copyWith({
+    ExampleStatus? status,
+    // other properties
+  }) {
+    return ExampleState(
+      status: status ?? this.status,
+      // other properties
+    );
+  }
+  
+  @override
+  List<Object> get props => [status /* other properties */];
+}
+
+enum ExampleStatus { initial, loading, success, failure }
+```
+
+## Development Rules
+
+### Code Quality
+- Always run `flutter analyze` before committing
+- Maintain test coverage above 80%
+- Use meaningful variable and function names
+- Add documentation for public APIs
+- Follow very_good_analysis linting rules
+- Use trailing commas for better git diffs
+- Maximum line length: 80 characters
+
+### Asset Management
+- Use generated assets from `lib/gen/assets.gen.dart`
+- Reference as `Assets.images.fileName` or `Assets.audio.fileName`
+- Preload frequently used assets in game's `onLoad()`
+- Optimize image sizes for target platforms
+
+### Performance Guidelines
+- Minimize object creation in `update()` methods
+- Use object pooling for frequently created/destroyed entities
+- Cache expensive calculations
+- Profile performance regularly with Flutter DevTools
+- Target 60fps on target devices
+
+### State Management Rules
+- Use Cubit for simple state, BLoC for complex state with events
+- Keep state immutable using copyWith pattern
+- Use Equatable for state classes
+- Emit new states, don't mutate existing ones
+- Handle all possible states in UI
+
+### Testing Requirements
+- Write unit tests for all business logic (cubits, services)
+- Write widget tests for UI components
+- Write game tests for Flame components using flame_test
+- Use bloc_test for state management testing
+- Mock external dependencies with mocktail
+
+### Git Workflow
+- Use conventional commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
+- Create feature branches: `feature/add-player-movement`
+- Write descriptive commit messages
+- Keep commits focused and atomic
+
+## Error Handling
+- Use try-catch for async operations
+- Provide user-friendly error messages
+- Log errors appropriately for debugging
+- Handle network failures gracefully
+- Validate user inputs
+
+## Internationalization
+- Use generated l10n classes from `lib/l10n/`
+- Access via `game.l10n.textKey` in game components
+- Access via `context.l10n.textKey` in Flutter widgets
+- Add strings to .arb files, never hardcode
+- Support RTL languages when applicable
+
+## Dependencies
+Keep these key dependencies up to date:
+- `flame`: Core game engine
+- `flame_behaviors`: Entity composition
+- `flutter_bloc`: State management
+- `flame_audio`: Game audio
+- `very_good_analysis`: Code quality
+
+## Environment-Specific Development
+- Use appropriate main file:
+  - `main_development.dart` for development
+  - `main_staging.dart` for staging
+  - `main_production.dart` for production
+- Configure environment-specific settings in each main file
+- Use flavors for platform-specific configurations
+
+When writing code, always consider maintainability, testability, and performance. Follow the established patterns and maintain consistency with the existing codebase.
