@@ -73,7 +73,21 @@ class _GameViewState extends State<GameView> {
         );
     return Stack(
       children: [
-        Positioned.fill(child: GameWidget(game: _game!)),
+        Positioned.fill(
+          child: GameWidget(
+            game: _game!,
+            backgroundBuilder: (context) {
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.images.gameBg.path),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
         Align(
           alignment: Alignment.topRight,
           child: BlocBuilder<AudioCubit, AudioState>(
