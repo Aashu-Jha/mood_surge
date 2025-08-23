@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mood_surge/l10n/l10n.dart';
 import 'package:mood_surge/loading/loading.dart';
-import 'package:mood_surge/title/title.dart';
+import 'package:mood_surge/welcome/welcome.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
@@ -18,7 +18,7 @@ class _LoadingPageState extends State<LoadingPage> {
     if (!mounted) {
       return;
     }
-    await navigator.pushReplacement<void, void>(TitlePage.route());
+    await navigator.pushReplacement<void, void>(WelcomePage.route());
   }
 
   @override
