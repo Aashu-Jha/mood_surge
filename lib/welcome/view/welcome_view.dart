@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mood_surge/game/game.dart';
 import 'package:mood_surge/gen/assets.gen.dart';
 import 'package:mood_surge/welcome/cubit/cubit.dart';
@@ -10,21 +11,21 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<WelcomeCubit, WelcomeState>(
-      listenWhen: (previous, current) => 
+      listenWhen: (previous, current) =>
           current.status == WelcomeStatus.navigating,
       listener: (context, state) {
         // Navigate to game with fade transition
         Navigator.of(context).pushReplacement<void, void>(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => 
+            pageBuilder: (context, animation, secondaryAnimation) =>
                 const GamePage(),
-            transitionsBuilder: 
+            transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
             transitionDuration: const Duration(milliseconds: 800),
           ),
         );
@@ -45,14 +46,38 @@ class WelcomeView extends StatelessWidget {
                       height: double.infinity,
                     ),
                   ),
+                  // Dim overlay effect
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ),
+                  // MOOD SURGE Title
+                  Positioned(
+                    top: MediaQuery.of(context).size.height * 0.10,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        Assets.images.title,
+                        height: 120,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ),
                   // Play button overlay
                   Positioned(
-                    bottom: 80,
+                    bottom: 60,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: _PlayButton(
-                        onPressed: () => 
+                        onPressed: () =>
                             context.read<WelcomeCubit>().playPressed(),
                         isPressed: state.status == WelcomeStatus.fading,
                       ),
@@ -96,20 +121,14 @@ class _PlayButtonState extends State<_PlayButton> {
         width: 200,
         height: 60,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: widget.isPressed || _isHovered
-                ? [
-                    const Color(0xFFFF6B35).withValues(alpha: 0.8),
-                    const Color(0xFFFF8E3C).withValues(alpha: 0.8),
-                  ]
-                : [
-                    const Color(0xFFFF6B35),
-                    const Color(0xFFFF8E3C),
-                  ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: widget.isPressed || _isHovered
+              ? const Color(0xFFF27154).withValues(alpha: 0.8)
+              : const Color(0xFFF27154),
           borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: Colors.white,
+            width: 2,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.3),
