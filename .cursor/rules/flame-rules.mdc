@@ -1,0 +1,179 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Mood Surge - Flutter Flame Game Development Rules
+
+## Project Overview
+This is a Flutter Flame 2D game using the very_good_flame_game project structure. The game uses BLoC for state management, flame_behaviors for component composition, and follows very_good_analysis linting standards.
+
+## Code Style & Formatting
+- Follow very_good_analysis linting rules (already configured in analysis_options.yaml)
+- Use meaningful, descriptive variable and function names
+- Prefer explicit types over var when it improves readability
+- Use trailing commas for better git diffs
+- Maximum line length: 80 characters
+- Use relative imports for internal project files
+- Always include proper documentation for public APIs (except where public_member_api_docs is disabled)
+
+## Project Structure Guidelines
+
+### Main Entry Points
+- Use appropriate main file for environment:
+  - `main_development.dart` for dev builds
+  - `main_staging.dart` for staging builds  
+  - `main_production.dart` for production builds
+- All entry points should use the `bootstrap()` function from `bootstrap.dart`
+
+### Directory Organization
+```
+lib/
+├── app/                    # Flutter app configuration
+├── game/                   # Flame game logic
+│   ├── components/         # Reusable game components
+│   ├── cubit/             # State management (BLoC/Cubit)
+│   ├── entities/          # Game entities with behaviors
+│   └── view/              # Game view widgets
+├── gen/                    # Generated code (assets, etc.)
+├── l10n/                   # Localization files
+├── loading/                # Loading screen logic
+└── title/                  # Title screen logic
+```
+
+### Flame Game Patterns
+
+#### Components
+- Extend `PositionComponent` for positioning
+- Use `HasGameReference<MoodSurge>` mixin to access game instance
+- Place in `lib/game/components/` directory
+- Export through `components.dart` barrel file
+- Example pattern:
+```dart
+class ExampleComponent extends PositionComponent 
+    with HasGameReference<MoodSurge> {
+  ExampleComponent({required super.position}) : super(anchor: Anchor.center);
+  
+  @override
+  Future<void> onLoad() async {
+    // Component initialization
+  }
+}
+```
+
+#### Entities
+- Extend `PositionedEntity` from flame_behaviors
+- Use composition over inheritance via behaviors
+- Place entity files in `lib/game/entities/[entity_name]/`
+- Behaviors go in `lib/game/entities/[entity_name]/behaviors/`
+- Export through `entities.dart` barrel file
+- Example pattern:
+```dart
+class ExampleEntity extends PositionedEntity with HasGameReference {
+  ExampleEntity({required super.position})
+    : super(
+        anchor: Anchor.center,
+        size: Vector2.all(32),
+        behaviors: [ExampleBehavior()],
+      );
+}
+```
+
+#### Behaviors
+- Create separate behavior classes extending appropriate flame_behaviors classes
+- Place in entity-specific `behaviors/` directories
+- Export through `behaviors.dart` barrel file
+- Keep behaviors focused and single-responsibility
+
+### State Management
+- Use BLoC/Cubit for game state management
+- Place state management files in `lib/game/cubit/`
+- Follow BLoC naming conventions (events, states, cubit)
+- Use `bloc_test` package for testing state management
+
+### Testing
+- Mirror source structure in test directory
+- Use `flame_test` for game component testing
+- Use `bloc_test` for state management testing
+- Use `mocktail` for mocking dependencies
+- Test files should end with `_test.dart`
+- Helper functions go in `test/helpers/`
+
+### Assets
+- Use `build_runner` generated assets from `lib/gen/assets.gen.dart`
+- Reference assets as `Assets.images.fileName` or `Assets.audio.fileName`
+- Place images in `assets/images/`
+- Place audio in `assets/audio/`
+- Update `pubspec.yaml` asset declarations when adding new assets
+
+### Internationalization
+- Use generated l10n classes
+- Place .arb files in appropriate l10n directory
+- Access via `game.l10n.textKey` pattern in game components
+
+## Development Guidelines
+
+### Adding New Components
+1. Create component class in `lib/game/components/`
+2. Export in `components.dart` barrel file
+3. Create corresponding test in `test/game/components/`
+4. Follow naming convention: `ComponentNameComponent`
+
+### Adding New Entities
+1. Create entity directory: `lib/game/entities/entity_name/`
+2. Create main entity file: `entity_name.dart`
+3. Create behaviors directory if needed
+4. Export in `entities.dart` barrel file
+5. Create tests in `test/game/entities/entity_name/`
+
+### Adding New Behaviors
+1. Create in appropriate entity's `behaviors/` directory
+2. Export in entity's `behaviors.dart` barrel file
+3. Follow naming convention: `BehaviorNameBehavior`
+4. Keep focused on single responsibility
+
+### Audio Integration
+- Use `flame_audio` for game audio
+- Use `audioplayers` for more complex audio needs
+- Access via game reference: `game.effectPlayer`
+- Preload audio assets in game's `onLoad()`
+
+### Performance Considerations
+- Preload sprites and animations in `onLoad()`
+- Use object pooling for frequently created/destroyed entities
+- Minimize allocations in `update()` methods
+- Use `SpriteAnimationComponent` for efficient animations
+- Cache frequently used calculations
+
+## Code Quality Standards
+- Write unit tests for all business logic
+- Write widget tests for UI components
+- Write game tests for Flame components
+- Maintain high test coverage
+- Use meaningful commit messages
+- Review code before merging
+
+## Common Anti-Patterns to Avoid
+- Don't put game logic in Flutter widgets
+- Don't create entities without behaviors when composition is beneficial
+- Don't ignore the very_good_analysis linter warnings
+- Don't hardcode strings that should be localized
+- Don't perform expensive operations in `update()` methods
+- Don't forget to dispose of resources in `onRemove()`
+
+## Dependencies
+Key dependencies and their purposes:
+- `flame`: Core game engine
+- `flame_behaviors`: Behavior composition system
+- `flutter_bloc`: State management
+- `flame_audio`: Game audio support
+- `google_fonts`: Typography
+- `very_good_analysis`: Linting standards
+
+## Development Commands
+- Run tests: `flutter test`
+- Generate assets: `flutter packages pub run build_runner build`
+- Analyze code: `flutter analyze`
+- Run dev: `flutter run --flavor development -t lib/main_development.dart`
+
+When suggesting code changes or new features, always follow these established patterns and maintain consistency with the existing codebase structure.
