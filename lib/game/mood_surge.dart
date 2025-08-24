@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
@@ -29,10 +31,18 @@ class MoodSurge extends FlameGame {
 
   @override
   Future<void> onLoad() async {
+    log('🎮 Game: Creating game world components...');
+    final archer = Archer(position: (size / 2)..sub(Vector2(30, 0)));
+    final counter = CounterComponent(position: (size / 2)..sub(Vector2(0, 16)));
+
+    log('🎮 Game: Archer created at ${archer.position}');
+    log('🎮 Game: Counter created at ${counter.position}');
+
     final world = World(
       children: [
-        Unicorn(position: size / 2),
-        CounterComponent(position: (size / 2)..sub(Vector2(0, 16))),
+        // unicorn,
+        archer,
+        counter,
       ],
     );
 
@@ -41,5 +51,11 @@ class MoodSurge extends FlameGame {
 
     camera.viewfinder.position = size / 2;
     camera.viewfinder.zoom = 8;
+
+    log('🎮 Game: Game loaded successfully. Screen size: $size');
+    log(
+      '🎮 Game: Camera position: ${camera.viewfinder.position}, '
+      'zoom: ${camera.viewfinder.zoom}',
+    );
   }
 }

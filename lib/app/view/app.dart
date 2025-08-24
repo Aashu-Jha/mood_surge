@@ -34,7 +34,7 @@ class AppView extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: const Color(0xFF2A48DF),
-        appBarTheme: const AppBarTheme(color: Color(0xFF2A48DF)),
+        appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF2A48DF)),
         colorScheme: ColorScheme.fromSwatch(
           accentColor: const Color(0xFF2A48DF),
         ),
