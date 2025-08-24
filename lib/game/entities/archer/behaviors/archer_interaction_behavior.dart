@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -18,12 +20,12 @@ class ArcherInteractionBehavior extends Behavior<Archer>
 
   @override
   void onTapDown(TapDownEvent event) {
-    print('🏹 Archer tapped!');
+    log('🏹 Archer tapped! Shooting arrow...');
 
-    // For now, just increment counter and play sound
-    // Skip animation until we get basic display working
+    // Play arrow shooting animation and create arrow projectile
+    parent.shootArrow();
 
-    // Increment game counter
+    // Increment game counter for interaction feedback
     game.counter++;
 
     // Play sound effect

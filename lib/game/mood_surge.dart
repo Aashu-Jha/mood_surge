@@ -54,7 +54,8 @@ class MoodSurge extends FlameGame {
 
     log('🎮 Game: Game loaded successfully. Screen size: $size');
     log(
-      '🎮 Game: Camera position: ${camera.viewfinder.position}, zoom: ${camera.viewfinder.zoom}',
+      '🎮 Game: Camera position: ${camera.viewfinder.position}, '
+      'zoom: ${camera.viewfinder.zoom}',
     );
   }
 }

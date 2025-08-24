@@ -25,11 +25,13 @@ class PreloadCubit extends Cubit<PreloadState> {
         () => images.loadAll([
           Assets.images.unicornAnimation.path,
           Assets.images.archer.idle.path,
+          Assets.images.archer.idle2.path,
           Assets.images.archer.run.path,
           Assets.images.archer.walk.path,
           Assets.images.archer.attack1.path,
           Assets.images.archer.shot1.path,
           Assets.images.archer.shot2.path,
+          Assets.images.archer.arrow.path,
         ]),
       ),
     ];
